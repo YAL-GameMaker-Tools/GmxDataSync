@@ -16,12 +16,19 @@ namespace GmxDataSync {
 					default: Console.WriteLine("`" + arg + "` is not a known argument."); break;
 					}
 				}
-				var file = new DataFile(args[0]);
-				file.Export(args[1]);
-				file.Reader.Close();
-				Console.WriteLine("Done.");
+				try {
+					Console.WriteLine("Reading file...");
+					var file = new DataFile(args[0]);
+					Console.WriteLine("Extracting...");
+					int total = file.Export(args[1]);
+					file.Reader.Close();
+					if (total > 0) {
+						Console.WriteLine("Exported " + total + " asset" + (total != 1 ? "s" : "") + ".");
+					} else Console.WriteLine("Nothing was exported - no matching assets?");
+				} catch (Exception e) {
+					Console.WriteLine("Error: " + e.ToString());
+				}
 			} else Console.WriteLine("Usage: GmxDataSync [data.win] [project directory path]");
-			Console.ReadLine();
 		}
 	}
 }

@@ -10,10 +10,11 @@ namespace GmxDataSync {
 			buf.Position += sizeof(int) * 6;
 			ImagePos = buf.ReadUInt32();
 		}
-		public override void Export(string path) {
+		public override bool Export(string path) {
 			if (System.IO.File.Exists(path + "/" + Name + ".font.gmx")) {
 				File.ImageMap[ImagePos].Export(path + "/" + Name + ".png");
-			}
+				return true;
+			} else return false;
 		}
 	}
 }

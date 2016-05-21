@@ -23,8 +23,9 @@ namespace GmxDataSync {
 			byte[] pngBytes = buf.ReadBytes((int)pngSize);
 			Image = new Bitmap(new MemoryStream(pngBytes));
 		}
-		public override void Export(string path) {
+		public override bool Export(string path) {
 			Image.Save(path);
+			return true;
 		}
 	}
 

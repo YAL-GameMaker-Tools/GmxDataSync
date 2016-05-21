@@ -10,6 +10,6 @@ namespace GmxDataSync {
 		public long Position;
 		public DataAsset() { }
 		public virtual void Proc(DataReader buf) { }
-		public virtual void Export(string path) { }
+		public virtual bool Export(string path) { return false; }
 	}
 }

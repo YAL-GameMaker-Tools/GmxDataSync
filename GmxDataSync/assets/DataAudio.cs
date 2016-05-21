@@ -11,13 +11,14 @@ namespace GmxDataSync {
 			FileSize = buf.ReadInt32();
 			FilePos = buf.Position;
 		}
-		public override void Export(string path) {
+		public override bool Export(string path) {
 			var r = File.Reader;
 			var w = new BinaryWriter(new FileStream(path, FileMode.Create));
 			r.Position = FilePos;
 			int i = FileSize;
 			while (--i >= 0) w.Write(r.ReadByte());
 			w.Close();
+			return true;
 		}
 	}
 }

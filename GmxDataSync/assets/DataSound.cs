@@ -13,11 +13,12 @@ namespace GmxDataSync {
 			buf.Position += sizeof(int) * 4;
 			AudioId = buf.ReadInt32();
 		}
-		public override void Export(string path) {
+		public override bool Export(string path) {
 			if (AudioId >= 0 && AudioId < File.AudioFiles.Length
 			&& System.IO.File.Exists(path + "/" + Name + ".sound.gmx")) {
 				File.AudioFiles[AudioId].Export(path + "/audio/" + FileName);
-			}
+				return true;
+			} else return false;
 		}
 	}
 }

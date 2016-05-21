@@ -30,8 +30,9 @@ namespace GmxDataSync {
 			}
 			return Image;
 		}
-		public override void Export(string path) {
+		public override bool Export(string path) {
 			ToImage().Save(path);
+			return true;
 		}
 	}
 

@@ -48,24 +48,40 @@ namespace GmxDataSync {
 			}
 			return arr;
 		}
-		private void ExportAssets<T>(T[] arr, string path, string word) where T : DataAsset {
-			if (!Directory.Exists(path)) Directory.CreateDirectory(path);
+		private int ExportAssets<T>(T[] arr, string path, string word) where T : DataAsset {
+			if (!Directory.Exists(path)) return 0;
 			int n = arr.Length;
-			if (n <= 0) return;
+			if (n <= 0) return 0;
+			int total = 0;
 			Console.Write("Exporting " + n + " " + word + (n != 1 ? "s" : "") + ": ");
 			for (int i = 0; i < n; i++) {
 				string si = "" + i;
 				Console.Write(si);
-				arr[i].Export(path);
+				if (arr[i].Export(path)) total += 1;
 				Console.Write("".PadRight(si.Length, '\x08'));
 			}
 			Console.WriteLine("done.");
+			return total;
 		}
-		public void Export(string path) {
-			ExportAssets(Sprites, path + "/sprites", "sprite");
-			ExportAssets(Backgrounds, path + "/background", "background");
-			ExportAssets(Fonts, path + "/fonts", "font");
-			ExportAssets(Sounds, path + "/sound", "sound");
+		private static void EnsureDirectory(string path) {
+			if (!Directory.Exists(path)) Directory.CreateDirectory(path);
+		}
+		public int Export(string path) {
+			int total = 0;
+			if (Directory.Exists(path + "/sprites")) {
+				EnsureDirectory(path + "/sprites/images");
+				total += ExportAssets(Sprites, path + "/sprites", "sprite");
+			}
+			if (Directory.Exists(path + "/background")) {
+				EnsureDirectory(path + "/background/images");
+				total += ExportAssets(Backgrounds, path + "/background", "background");
+			}
+			total += ExportAssets(Fonts, path + "/fonts", "font");
+			if (Directory.Exists(path + "/sound")) {
+				EnsureDirectory(path + "/sound/audio");
+				total += ExportAssets(Sounds, path + "/sound", "sound");
+			}
+			return total;
 		}
 	}
 

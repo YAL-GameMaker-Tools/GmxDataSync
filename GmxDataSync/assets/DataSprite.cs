@@ -34,8 +34,8 @@ namespace GmxDataSync {
 				bmp.Save(path + "/images/" + Name + "_" + i + ".mask.png");
 			}
 		}
-		public override void Export(string path) {
-			if (!System.IO.File.Exists(path + "/" + Name + ".sprite.gmx")) return;
+		public override bool Export(string path) {
+			if (!System.IO.File.Exists(path + "/" + Name + ".sprite.gmx")) return false;
 			for (int i = 0; i < ImagePos.Length; i++) {
 				DataImage img = File.ImageMap[ImagePos[i]];
 				string next = path + "/images/" + Name + "_" + i + ".png";
@@ -47,6 +47,7 @@ namespace GmxDataSync {
 				} else img.ToImage().Save(next);
 			}
 			if (ExportMasksOn) ExportMasks(path);
+			return true;
 		}
 	}
 }

@@ -10,10 +10,11 @@ namespace GmxDataSync {
 			buf.Position += sizeof(int) * 3;
 			ImagePos = buf.ReadUInt32();
 		}
-		public override void Export(string path) {
+		public override bool Export(string path) {
 			if (System.IO.File.Exists(path + "/" + Name + ".background.gmx")) {
 				File.ImageMap[ImagePos].Export(path + "/images/" + Name + ".png");
-			}
+				return true;
+			} else return false;
 		}
 	}
 }
