@@ -39,12 +39,7 @@ namespace GmxDataSync {
 			for (int i = 0; i < ImagePos.Length; i++) {
 				DataImage img = File.ImageMap[ImagePos[i]];
 				string next = path + "/images/" + Name + "_" + i + ".png";
-				if (img.Width != Width || img.Height != Height) {
-					Bitmap bmp = new Bitmap(Width, Height);
-					Graphics gfx = Graphics.FromImage(bmp);
-					gfx.DrawImage(img.ToImage(), img.OffsetX, img.OffsetY);
-					bmp.Save(next);
-				} else img.ToImage().Save(next);
+				img.Export(next);
 			}
 			if (ExportMasksOn) ExportMasks(path);
 			return true;
