@@ -12,8 +12,8 @@ namespace GmxDataSync {
 				while (i < args.Length) {
 					string arg = args[i++];
 					switch (arg) {
-					case "-masks": DataSprite.ExportMasksOn = true; break;
-					default: Console.WriteLine("`" + arg + "` is not a known argument."); break;
+						case "-masks": DataSprite.ExportMasksOn = true; break;
+						default: Console.WriteLine("`" + arg + "` is not a known argument."); break;
 					}
 				}
 				try {
@@ -29,6 +29,9 @@ namespace GmxDataSync {
 					Console.WriteLine("Error: " + e.ToString());
 				}
 			} else Console.WriteLine("Usage: GmxDataSync [data.win] [project directory path]");
+			#if DEBUG
+			Console.ReadKey();
+			#endif
 		}
 	}
 }

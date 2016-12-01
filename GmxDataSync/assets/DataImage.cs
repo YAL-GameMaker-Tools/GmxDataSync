@@ -23,9 +23,9 @@ namespace GmxDataSync {
 		public Bitmap ToImage() {
 			if (Image == null) {
 				DataTexture tex = File.Textures[TextureId];
-				Bitmap bmp = new Bitmap(Width, Height);
+				Bitmap bmp = new Bitmap(Width + OffsetX, Height + OffsetY);
 				Graphics gfx = Graphics.FromImage(bmp);
-				gfx.DrawImage(tex.Image, -Left, -Top);
+				gfx.DrawImage(tex.Image, OffsetX, OffsetY, new Rectangle(Left, Top, Width, Height), GraphicsUnit.Pixel);
 				Image = bmp;
 			}
 			return Image;
