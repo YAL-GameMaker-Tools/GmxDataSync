@@ -67,20 +67,28 @@ namespace GmxDataSync {
 			if (!Directory.Exists(path)) Directory.CreateDirectory(path);
 		}
 		public int Export(string path) {
-			int total = 0;
+			int total = 0, sections = 0;
 			if (Directory.Exists(path + "/sprites")) {
 				EnsureDirectory(path + "/sprites/images");
 				total += ExportAssets(Sprites, path + "/sprites", "sprite");
+				sections += 1;
 			}
 			if (Directory.Exists(path + "/background")) {
 				EnsureDirectory(path + "/background/images");
 				total += ExportAssets(Backgrounds, path + "/background", "background");
+				sections += 1;
 			}
-			total += ExportAssets(Fonts, path + "/fonts", "font");
+			int fonts = ExportAssets(Fonts, path + "/fonts", "font");
+			if (fonts > 0) {
+				total += fonts;
+				sections += 1;
+			}
 			if (Directory.Exists(path + "/sound")) {
 				EnsureDirectory(path + "/sound/audio");
 				total += ExportAssets(Sounds, path + "/sound", "sound");
+				sections += 1;
 			}
+			if (sections == 0) total = -1;
 			return total;
 		}
 	}

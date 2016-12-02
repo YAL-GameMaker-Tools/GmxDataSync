@@ -7,6 +7,19 @@ using System.Drawing;
 namespace GmxDataSync {
 	class Program {
 		static void Main(string[] args) {
+			bool readKey = false;
+			#if DEBUG
+			readKey = true;
+			#endif
+			//
+			if (args.Length == 0) {
+				Console.WriteLine("Usage: GmxDataSync [data.win] [project directory path]");
+				readKey = true;
+			} else if (args.Length == 1) {
+				Console.WriteLine("No `path` argument - trying to export into directory where datafile is.");
+				args = new string[] { args[0], Path.GetDirectoryName(Path.GetFullPath(args[0])) };
+				readKey = true;
+			}
 			if (args.Length >= 2) {
 				int i = 2;
 				while (i < args.Length) {
@@ -24,14 +37,21 @@ namespace GmxDataSync {
 					file.Reader.Close();
 					if (total > 0) {
 						Console.WriteLine("Exported " + total + " asset" + (total != 1 ? "s" : "") + ".");
-					} else Console.WriteLine("Nothing was exported - no matching assets?");
+					} else if (total == 0) {
+						Console.WriteLine("Nothing was exported - no shared assets between datafile and project.");
+						Console.WriteLine("Is it the right project as such?");
+					} else {
+						Console.WriteLine("Directory `" + args[1] + "` does not to seem to contain any project files.");
+						readKey = true;
+					}
 				} catch (Exception e) {
-					Console.WriteLine("Error: " + e.ToString());
+					Console.WriteLine("Runtime error: " + e.ToString());
+					Console.WriteLine("The datafile may be broken or corrupt.");
+					readKey = true;
 				}
-			} else Console.WriteLine("Usage: GmxDataSync [data.win] [project directory path]");
-			#if DEBUG
-			Console.ReadKey();
-			#endif
+			}
+			//
+			if (readKey) Console.ReadKey();
 		}
 	}
 }

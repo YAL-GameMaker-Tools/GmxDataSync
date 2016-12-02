@@ -1,3 +1,6 @@
 GmxDataSync/bin/
 GmxDataSync/obj/
 .vs/
+Executable/GmxDataSync.pdb
+Executable/GmxDataSync.vshost.exe
+Executable/GmxDataSync.vshost.exe.manifest
