@@ -34,8 +34,14 @@ namespace GmxDataSync {
 				DataTexture tex = File.Textures[TextureId];
 				Bitmap bmp = new Bitmap(OutWidth, OutHeight);
 				Graphics gfx = Graphics.FromImage(bmp);
-				Rectangle srcRect = new Rectangle(SrcLeft, SrcTop, DstWidth, DstHeight);
-				gfx.DrawImage(tex.Image, DstLeft, DstTop, srcRect, GraphicsUnit.Pixel);
+				Rectangle srcRect = new Rectangle(SrcLeft, SrcTop, SrcWidth, SrcHeight);
+				Rectangle dstRect = new Rectangle(DstLeft, DstTop, DstWidth, DstHeight);
+				gfx.InterpolationMode = System.Drawing.Drawing2D.InterpolationMode.NearestNeighbor;
+				if (DstWidth > SrcWidth || DstHeight > SrcHeight) {
+					Bitmap srcBmp = new Bitmap(SrcWidth, SrcHeight);
+					Graphics.FromImage(srcBmp).DrawImage(tex.Image, 0, 0, srcRect, GraphicsUnit.Pixel);
+					gfx.DrawImage(srcBmp, dstRect);
+				} else gfx.DrawImage(tex.Image, dstRect, srcRect, GraphicsUnit.Pixel);
 				Image = bmp;
 			}
 			return Image;
