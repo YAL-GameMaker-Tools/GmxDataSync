@@ -33,8 +33,10 @@ namespace GmxDataSync {
 					Console.WriteLine("Reading file...");
 					var file = new DataFile(args[0]);
 					//
-					string map = Path.GetDirectoryName(args[0]) + "/gdsync.txt";
-					if (File.Exists(map)) file.LoadMap(map);
+					string map = args[1] + "/gdsync.txt";
+					if (File.Exists(map)) {
+						file.LoadMap(map);
+					}
 					//
 					Console.WriteLine("Extracting...");
 					int total = file.Export(args[1]);

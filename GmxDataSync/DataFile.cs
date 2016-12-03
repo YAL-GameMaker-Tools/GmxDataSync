@@ -43,11 +43,12 @@ namespace GmxDataSync {
 			try {
 				var reader = File.OpenText(path); string line;
 				Dictionary<uint, string> map = null;
+				string type = "none";
 				while ((line = reader.ReadLine()) != null) {
 					int last = line.Length - 1;
 					int pos = line.IndexOf(':');
 					if (pos == last) {
-						string type = line.Substring(0, last);
+						type = line.Substring(0, last);
 						switch (type) {
 							case "sprites": map = SpriteMap; break;
 							case "backgrounds": map = BackgroundMap; break;
@@ -64,7 +65,7 @@ namespace GmxDataSync {
 				}
 				return true;
 			} catch (Exception e) {
-				Console.WriteLine("Remap error: " + e);
+				Console.WriteLine("Error parsing remap file: " + e);
 				return false;
 			}
 		}
