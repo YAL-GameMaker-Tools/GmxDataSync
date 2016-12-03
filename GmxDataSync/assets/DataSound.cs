@@ -14,6 +14,7 @@ namespace GmxDataSync {
 			AudioId = buf.ReadInt32();
 		}
 		public override bool Export(string path) {
+			if (File.SpriteMap.ContainsKey(Index)) Name = File.SoundMap[Index];
 			if (AudioId >= 0 && AudioId < File.AudioFiles.Length
 			&& System.IO.File.Exists(path + "/" + Name + ".sound.gmx")) {
 				File.AudioFiles[AudioId].Export(path + "/audio/" + FileName);

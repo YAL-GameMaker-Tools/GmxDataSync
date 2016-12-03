@@ -5,15 +5,23 @@ using System.IO;
 namespace GmxDataSync {
 	class DataFile {
 		public DataReader Reader;
+		// raw data:
 		public Dictionary<string, long> Chunks = new Dictionary<string, long>();
 		public DataTexture[] Textures;
 		public DataImage[] Images;
-		public Dictionary<uint, DataImage> ImageMap = new Dictionary<uint, DataImage>();
-		public DataSprite[] Sprites;
-		public DataFont[] Fonts;
-		public DataBackground[] Backgrounds;
 		public DataAudio[] AudioFiles;
+		public Dictionary<uint, DataImage> ImageMap = new Dictionary<uint, DataImage>();
+		// assets:
+		public DataSprite[] Sprites;
+		public DataBackground[] Backgrounds;
+		public DataFont[] Fonts;
 		public DataSound[] Sounds;
+		// remap:
+		public Dictionary<uint, string> SpriteMap = new Dictionary<uint, string>();
+		public Dictionary<uint, string> BackgroundMap = new Dictionary<uint, string>();
+		public Dictionary<uint, string> FontMap = new Dictionary<uint, string>();
+		public Dictionary<uint, string> SoundMap = new Dictionary<uint, string>();
+		//
 		public DataFile(string path) {
 			Reader = new DataReader(path);
 			while (Reader.Position < Reader.DataEnd) {
@@ -30,6 +38,35 @@ namespace GmxDataSync {
 			Backgrounds = LoadAssets<DataBackground>("BGND");
 			AudioFiles = LoadAssets<DataAudio>("AUDO");
 			Sounds = LoadAssets<DataSound>("SOND");
+		}
+		public bool LoadMap(string path) {
+			try {
+				var reader = File.OpenText(path); string line;
+				Dictionary<uint, string> map = null;
+				while ((line = reader.ReadLine()) != null) {
+					int last = line.Length - 1;
+					int pos = line.IndexOf(':');
+					if (pos == last) {
+						string type = line.Substring(0, last);
+						switch (type) {
+							case "sprites": map = SpriteMap; break;
+							case "backgrounds": map = BackgroundMap; break;
+							case "sounds": map = SoundMap; break;
+							case "fonts": map = FontMap; break;
+							default: throw new Exception("Unknown section type `" + type + "`.");
+						}
+					} else if (pos >= 0) {
+						uint index;
+						if (uint.TryParse(line.Substring(0, pos).Trim(), out index)) {
+							map[index] = line.Substring(pos + 1).Trim();
+						}
+					}
+				}
+				return true;
+			} catch (Exception e) {
+				Console.WriteLine("Remap error: " + e);
+				return false;
+			}
 		}
 		public T[] LoadAssets<T>(string chunkName) where T : DataAsset, new() {
 			Reader.Position = Chunks[chunkName];

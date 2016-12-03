@@ -32,6 +32,10 @@ namespace GmxDataSync {
 				try {
 					Console.WriteLine("Reading file...");
 					var file = new DataFile(args[0]);
+					//
+					string map = Path.GetDirectoryName(args[0]) + "/gdsync.txt";
+					if (File.Exists(map)) file.LoadMap(map);
+					//
 					Console.WriteLine("Extracting...");
 					int total = file.Export(args[1]);
 					file.Reader.Close();
@@ -51,7 +55,11 @@ namespace GmxDataSync {
 				}
 			}
 			//
-			if (readKey) Console.ReadKey();
+			if (readKey) {
+				Console.Write("Press any key to exit...");
+				Console.ReadKey();
+			}
+
 		}
 	}
 }
