@@ -1,4 +1,5 @@
-﻿using System.Drawing;
+﻿using System;
+using System.Drawing;
 
 namespace GmxDataSync {
 	class DataSprite:DataAsset {
@@ -31,19 +32,22 @@ namespace GmxDataSync {
 						}
 					}
 				}
-				bmp.Save(path + "/images/" + Name + "_" + i + ".mask.png");
+				bmp.Save(path + "/images/" + File.Remap(File.SpriteMap, Index, Name) + "_" + i + ".mask.png");
 			}
 		}
 		public override bool Export(string path) {
-			if (File.SpriteMap.ContainsKey(Index)) Name = File.SpriteMap[Index];
-			if (!System.IO.File.Exists(path + "/" + Name + ".sprite.gmx")) return false;
-			for (int i = 0; i < ImagePos.Length; i++) {
-				DataImage img = File.ImageMap[ImagePos[i]];
-				string next = path + "/images/" + Name + "_" + i + ".png";
-				img.Export(next);
+			string name = File.Remap(File.SpriteMap, Index, Name);
+			if (System.IO.File.Exists(path + "/" + name + ".sprite.gmx")) {
+				for (int i = 0; i < ImagePos.Length; i++) {
+					DataImage img = File.ImageMap[ImagePos[i]];
+					string next = path + "/images/" + name + "_" + i + ".png";
+					img.Export(next);
+				}
+				if (ExportMasksOn) ExportMasks(path);
+				return true;
+			} else {
+				return false;
 			}
-			if (ExportMasksOn) ExportMasks(path);
-			return true;
 		}
 	}
 }

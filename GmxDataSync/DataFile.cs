@@ -21,6 +21,11 @@ namespace GmxDataSync {
 		public Dictionary<uint, string> BackgroundMap = new Dictionary<uint, string>();
 		public Dictionary<uint, string> FontMap = new Dictionary<uint, string>();
 		public Dictionary<uint, string> SoundMap = new Dictionary<uint, string>();
+		public string Remap(Dictionary<uint, string> map, uint index, string name) {
+			if (map.ContainsKey(index)) {
+				return map[index];
+			} else return name;
+		}
 		//
 		public DataFile(string path) {
 			Reader = new DataReader(path);
@@ -98,7 +103,7 @@ namespace GmxDataSync {
 				if (arr[i].Export(path)) total += 1;
 				Console.Write("".PadRight(si.Length, '\x08'));
 			}
-			Console.WriteLine("done.");
+			Console.WriteLine("done (" + total + " match" + (total != 1 ? "es" : "") + ").");
 			return total;
 		}
 		private static void EnsureDirectory(string path) {

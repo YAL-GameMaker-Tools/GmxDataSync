@@ -11,11 +11,13 @@ namespace GmxDataSync {
 			ImagePos = buf.ReadUInt32();
 		}
 		public override bool Export(string path) {
-			if (File.SpriteMap.ContainsKey(Index)) Name = File.BackgroundMap[Index];
-			if (System.IO.File.Exists(path + "/" + Name + ".background.gmx")) {
-				File.ImageMap[ImagePos].Export(path + "/images/" + Name + ".png");
+			string name = File.Remap(File.BackgroundMap, Index, Name);
+			if (System.IO.File.Exists(path + "/" + name + ".background.gmx")) {
+				File.ImageMap[ImagePos].Export(path + "/images/" + name + ".png");
 				return true;
-			} else return false;
+			} else {
+				return false;
+			}
 		}
 	}
 }

@@ -14,12 +14,18 @@ namespace GmxDataSync {
 			AudioId = buf.ReadInt32();
 		}
 		public override bool Export(string path) {
-			if (File.SpriteMap.ContainsKey(Index)) Name = File.SoundMap[Index];
+			string name = File.Remap(File.SoundMap, Index, Name);
 			if (AudioId >= 0 && AudioId < File.AudioFiles.Length
-			&& System.IO.File.Exists(path + "/" + Name + ".sound.gmx")) {
-				File.AudioFiles[AudioId].Export(path + "/audio/" + FileName);
+			&& System.IO.File.Exists(path + "/" + name + ".sound.gmx")) {
+				string epath = path + "/audio/";
+				if (Name != name) {
+					epath += FileName.Replace(Name, name);
+				} else epath += FileName;
+				File.AudioFiles[AudioId].Export(epath);
 				return true;
-			} else return false;
+			} else {
+				return false;
+			}
 		}
 	}
 }
