@@ -12,7 +12,7 @@ namespace GmxDataSync {
 		}
 		public override bool Export(string path) {
 			string name = File.Remap(File.BackgroundMap, Index, Name);
-			if (System.IO.File.Exists(path + "/" + name + ".background.gmx")) {
+			if (DataFile.ForceExport || System.IO.File.Exists(path + "/" + name + ".background.gmx")) {
 				File.ImageMap[ImagePos].Export(path + "/images/" + name + ".png");
 				return true;
 			} else {

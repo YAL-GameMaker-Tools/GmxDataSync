@@ -37,7 +37,7 @@ namespace GmxDataSync {
 		}
 		public override bool Export(string path) {
 			string name = File.Remap(File.SpriteMap, Index, Name);
-			if (System.IO.File.Exists(path + "/" + name + ".sprite.gmx")) {
+			if (DataFile.ForceExport || System.IO.File.Exists(path + "/" + name + ".sprite.gmx")) {
 				for (int i = 0; i < ImagePos.Length; i++) {
 					DataImage img = File.ImageMap[ImagePos[i]];
 					string next = path + "/images/" + name + "_" + i + ".png";

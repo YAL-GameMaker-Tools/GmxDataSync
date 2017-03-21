@@ -16,7 +16,7 @@ namespace GmxDataSync {
 		public override bool Export(string path) {
 			string name = File.Remap(File.SoundMap, Index, Name);
 			if (AudioId >= 0 && AudioId < File.AudioFiles.Length
-			&& System.IO.File.Exists(path + "/" + name + ".sound.gmx")) {
+			&& (DataFile.ForceExport || System.IO.File.Exists(path + "/" + name + ".sound.gmx"))) {
 				string epath = path + "/audio/";
 				if (Name != name) {
 					epath += FileName.Replace(Name, name);

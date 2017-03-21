@@ -47,6 +47,7 @@ namespace GmxDataSync {
 			return Image;
 		}
 		public override bool Export(string path) {
+			if (DataFile.NoReplace && System.IO.File.Exists(path)) return true;
 			ToImage().Save(path);
 			return true;
 		}

@@ -4,6 +4,10 @@ using System.IO;
 
 namespace GmxDataSync {
 	class DataFile {
+		// options:
+		public static bool ForceExport = false;
+		public static bool NoReplace = false;
+		//
 		public DataReader Reader;
 		// raw data:
 		public Dictionary<string, long> Chunks = new Dictionary<string, long>();
@@ -35,9 +39,9 @@ namespace GmxDataSync {
 				Chunks[chType] = Reader.Position;
 				Reader.Position += chSize;
 			}
-			Textures = LoadAssets<DataTexture>("TXTR");
+			Textures = LoadAssets<DataTexture>("TXTR", "texture");
 			Images = LoadAssets<DataImage>("TPAG");
-			foreach (var q in Images) ImageMap[(uint)q.Position] = q;
+			foreach (var q in Images) ImageMap[(uint)(q.Position - Reader.DataStart)] = q;
 			Sprites = LoadAssets<DataSprite>("SPRT");
 			Fonts = LoadAssets<DataFont>("FONT");
 			Backgrounds = LoadAssets<DataBackground>("BGND");
@@ -74,25 +78,32 @@ namespace GmxDataSync {
 				return false;
 			}
 		}
-		public T[] LoadAssets<T>(string chunkName) where T : DataAsset, new() {
+		public T[] LoadAssets<T>(string chunkName, string pg = null) where T : DataAsset, new() {
 			Reader.Position = Chunks[chunkName];
 			uint count = Reader.ReadUInt32();
 			T[] arr = new T[count];
+			if (pg != null) Console.Write(string.Format("Reading {0} {1}{2}: ", count, pg, count != 1 ? "s" : ""));
 			for (uint i = 0; i < count; i++) {
 				T item = new T();
 				item.File = this;
 				item.Index = i;
-				item.Position = Reader.ReadUInt32();
+				item.Position = Reader.DataStart + Reader.ReadUInt32();
 				arr[i] = item;
 			}
 			foreach (T item in arr) {
 				Reader.Position = item.Position;
-				item.Proc(Reader);
+				if (pg != null) {
+					string si = item.Index.ToString();
+					Console.Write(si);
+					item.Proc(Reader);
+					Console.Write("".PadRight(si.Length, '\x08'));
+				} else item.Proc(Reader);
 			}
+			if (pg != null) Console.WriteLine("done.");
 			return arr;
 		}
 		private int ExportAssets<T>(T[] arr, string path, string word) where T : DataAsset {
-			if (!Directory.Exists(path)) return 0;
+			if (!ForceExport && !Directory.Exists(path)) return 0;
 			int n = arr.Length;
 			if (n <= 0) return 0;
 			int total = 0;
@@ -111,22 +122,22 @@ namespace GmxDataSync {
 		}
 		public int Export(string path) {
 			int total = 0, sections = 0;
-			if (Directory.Exists(path + "/sprites")) {
+			if (ForceExport || Directory.Exists(path + "/sprites")) {
 				EnsureDirectory(path + "/sprites/images");
 				total += ExportAssets(Sprites, path + "/sprites", "sprite");
 				sections += 1;
 			}
-			if (Directory.Exists(path + "/background")) {
+			if (ForceExport || Directory.Exists(path + "/background")) {
 				EnsureDirectory(path + "/background/images");
 				total += ExportAssets(Backgrounds, path + "/background", "background");
 				sections += 1;
 			}
-			int fonts = ExportAssets(Fonts, path + "/fonts", "font");
-			if (fonts > 0) {
-				total += fonts;
+			if (ForceExport || Directory.Exists(path + "/fonts")) {
+				if (ForceExport) EnsureDirectory(path + "/fonts");
+				total += ExportAssets(Fonts, path + "/fonts", "font");
 				sections += 1;
 			}
-			if (Directory.Exists(path + "/sound")) {
+			if (ForceExport || Directory.Exists(path + "/sound")) {
 				EnsureDirectory(path + "/sound/audio");
 				total += ExportAssets(Sounds, path + "/sound", "sound");
 				sections += 1;

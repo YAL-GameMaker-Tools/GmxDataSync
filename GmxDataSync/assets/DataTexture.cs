@@ -7,6 +7,7 @@ namespace GmxDataSync {
 		public override void Proc(DataReader buf) {
 			buf.ReadUInt32();
 			long pngPos = buf.ReadUInt32();
+			pngPos += buf.DataStart;
 			buf.Position = pngPos + 8;
 			while (buf.Position < buf.DataEnd) {
 				int chSize = 0;

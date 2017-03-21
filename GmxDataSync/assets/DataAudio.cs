@@ -12,6 +12,7 @@ namespace GmxDataSync {
 			FilePos = buf.Position;
 		}
 		public override bool Export(string path) {
+			if (DataFile.NoReplace && System.IO.File.Exists(path)) return true;
 			var r = File.Reader;
 			var w = new BinaryWriter(new FileStream(path, FileMode.Create));
 			r.Position = FilePos;
